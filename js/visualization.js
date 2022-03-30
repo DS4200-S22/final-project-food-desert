@@ -1,5 +1,5 @@
-let width = 960;
-let height = 600;
+let width_map = 960;
+let height_map = 600;
 let color_domain = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 let ext_color_domain = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
 let legend_labels = ["0", "10", "20", "30", "40", "50", "60", "70", "80", "90", "100"]
@@ -8,17 +8,20 @@ let color = d3.scaleThreshold()
                 .range(d3.schemeBlues[9]);
 
 let svg = d3.select("#vis-container").append("svg")
-              .attr("width", width)
-              .attr("height", height)
+              .attr("width", width_map)
+              .attr("height", height_map)
               .style("margin", "-15px auto");
 let path = d3.geoPath();
 
 Promise.all([
-    d3.json("js/counties-albers-10m.json"),
-  ]).then(res => ready(res[0]));
+    d3.json("data/counties-albers-10m.json"),
+    d3.csv("data/finaldata.csv")
+  ]).then((values) => ready(values[0], values[1]));
 
 
-function ready(us) {
+function ready(us, data) {
+  console.log(data);
+  
   svg.append("g")
     .attr("class", "county")
     .selectAll("path")
@@ -36,7 +39,7 @@ var legend = svg.selectAll("g.legend")
 var ls_w = 80, ls_h = 20;
 
 legend.append("rect")
-        .attr("x", function(d, i){ return width - (i*ls_w) - ls_w;})
+        .attr("x", function(d, i){ return width_map - (i*ls_w) - ls_w;})
         .attr("y", 550)
         .attr("width", ls_w)
         .attr("height", ls_h)
