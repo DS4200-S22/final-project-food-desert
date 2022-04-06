@@ -9,19 +9,24 @@ let scatterSvg = d3.select("#scatterplot-vis")
                     .attr("height", height - margin.top - margin.bottom)
                     .attr("viewBox", [0, 0, width, height]);
 
-const data1 = [{"x":10, "y":20, "location": "Suffolk, MA"},
-                {"x":50, "y":30, "location": "Windham, CT"},
-                {"x":30, "y":40, "location": "Hamilton, NY"}]
+const seriesData = [[{"x":20, "y":30}, {"x":35, "y":60}, {"x":60, "y":70}],
+                    [{"x":20, "y":50}, {"x":35, "y":40}, {"x":60, "y":65}]];
 
-const data2 = [{"x":20, "y":20, "location": "Suffolk, MA"},
-                {"x":40, "y":30, "location": "Windham, CT"},
-                {"x": 80, "y":40, "location": "Hamilton, NY"}]
+let seriesNames = ["Diabetes", "Obesity"];
+
+let myColor = d3.scaleOrdinal()
+                .domain(seriesNames)
+                .range(d3.schemeSet2);
+
+let myShape = d3.scaleOrdinal()
+                .domain(seriesNames)
+                .range(d3.symbols);
 
 // find max X
-let maxX = 100
+let maxX = 100;
 
 // find max Y 
-let maxY = 100
+let maxY = 100;
 
 let xScale = d3.scaleLinear() // linear scale because we have 
                               // linear data 
@@ -30,14 +35,14 @@ let xScale = d3.scaleLinear() // linear scale because we have
                 // ^ outputs for the function 
 
 let yScale = d3.scaleLinear()
-            .domain([0, maxY])
-            .range([height - margin.bottom, margin.top]); 
+                .domain([0, maxY])
+                .range([height - margin.bottom, margin.top]); 
 
 // Add x axis to svg6  
 scatterSvg.append("g") // g is a "placeholder" svg
             .attr("transform", `translate(0,${height - margin.bottom})`) 
             // ^ moves axis to bottom of svg 
-            .call(d3.axisBottom(xScale)) // built in function for bottom
+            .call(d3.axisBottom(xScale).tickFormat(x => (x == 0 || x == 100) ? x : "")) // built in function for bottom
                                         // axis given a scale function 
             .attr("font-size", '20px'); // set font size
 
@@ -45,29 +50,20 @@ scatterSvg.append("g") // g is a "placeholder" svg
 scatterSvg.append("g") // g is a "placeholder" svg
             .attr("transform", `translate(${margin.left}, 0)`) 
             // ^ move axis inside of left margin
-            .call(d3.axisLeft(yScale)) // built in function for left
+            .call(d3.axisLeft(yScale).tickFormat(y => (y == 0 || y == 100) ? y : "")) // built in function for left
                                         // axis given a scale function 
             .attr("font-size", '20px'); // set font size
 
-// great, we have axes! next, let's add points just like before
-// but using our scale functions 
-scatterSvg.selectAll("circle") 
-            .data(data1)
-            .enter()  
-            .append("circle")
-            .attr("cx", (d) => xScale(d.x)) // use xScale to return 
-                                            // pixel value for given
-                                            // datum 
-            .attr("cy", (d) => yScale(d.y)) // use yScale to return 
-                                            // pixel value for given
-                                            // datum 
-            .attr("r", 10) 
-            // we could also set color based on data useing a 
-            // colormap, which like scale functions, maps data to 
-            // colors 
-
-scatterSvg.selectAll("text")
-            .data(data1)
+scatterSvg.selectAll("myDots")
+            .data(seriesData)
             .enter()
-            .append("text")
-            .text((d) => d.location);
+            .append('g')
+            .attr("fill", (d) => { return myColor(d.name) })
+            .attr("d", (d) => { return myShape(d.name) })
+            .selectAll("myPoints")
+            .data((d) => { return d.values() })
+            .enter()
+            .append("circle")
+            .attr("cx", (d) => { return xScale(d.x) } )
+            .attr("cy", (d) => { return yScale(d.y) } )
+            .attr("r", 5)
