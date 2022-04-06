@@ -24,3 +24,17 @@ h3 {
   width: 100%;
   height: 100%;
 }
+
+#state-borders {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 1.5px;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  pointer-events: none;
+}
+
+.legend {
+  margin-top: 50px;
+  padding-top: 50px;
+}
