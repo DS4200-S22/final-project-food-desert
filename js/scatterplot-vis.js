@@ -32,7 +32,7 @@ let xScale = d3.scaleLinear() // linear scale because we have
 
 let yScale = d3.scaleLinear()
                 .domain([0, maxY])
-                .range([height - margin.bottom, margin.top]); 
+                .range([height - margin.bottom, margin.top]);
 
 // Add x axis to svg
 scatterSvg.append("g") // g is a "placeholder" svg
@@ -48,12 +48,13 @@ scatterSvg.append("g") // g is a "placeholder" svg
             .call(d3.axisLeft(yScale).tickFormat(y => (y == 0 || y == 100) ? y : "")) // built in function for left
              .attr("font-size", '20px'); // set font size
 
-scatterSvg.append("myDots").selectAll("myDots")
+scatterSvg.selectAll("myDots")
             .data(seriesData)
             .enter()
-            .attr("fill", (d) => { return myColor(d.key) })
-            .append("myPoints").selectAll("myPoints")
-            .data((d) => { return d.values() })
+            .append('g')
+            .attr("fill", (d) => { return myColor(d.keys) })
+            .selectAll("myPoints")
+            .data( (d) => { return d.values() })
             .enter()
             .append("circle")
             .attr("cx", (d) => { return xScale(d.x) } )
