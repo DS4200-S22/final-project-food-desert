@@ -47,6 +47,7 @@ function ready(us, data) {
       .attr("fill", function (d) {
         return color(pct_data.get(d.properties.name));
       })
+      .on("click", county_clicked)
 
   // add state borders
   svg.append("path")
@@ -57,6 +58,16 @@ function ready(us, data) {
   // add zoom effect to map
   svg.call(zoom);
 };
+
+function county_clicked(event, d) {
+  let selected_color = "rgb(255, 0, 0)";
+  if (d3.select(this).style("fill") == selected_color) {
+    d3.select(this).transition().style("fill", null);
+  }
+  else {
+    d3.select(this).transition().style("fill", selected_color);
+  }
+}
 
 function zoomed(event) {
   const {transform} = event;
