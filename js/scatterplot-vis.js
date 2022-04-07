@@ -18,10 +18,6 @@ let myColor = d3.scaleOrdinal()
                 .domain(seriesNames)
                 .range(d3.schemeSet2);
 
-let myShape = d3.scaleOrdinal()
-                .domain(seriesNames)
-                .range(d3.symbols);
-
 // find max X
 let maxX = 100;
 
@@ -38,32 +34,43 @@ let yScale = d3.scaleLinear()
                 .domain([0, maxY])
                 .range([height - margin.bottom, margin.top]); 
 
-// Add x axis to svg6  
+// Add x axis to svg
 scatterSvg.append("g") // g is a "placeholder" svg
             .attr("transform", `translate(0,${height - margin.bottom})`) 
             // ^ moves axis to bottom of svg 
             .call(d3.axisBottom(xScale).tickFormat(x => (x == 0 || x == 100) ? x : "")) // built in function for bottom
-                                        // axis given a scale function 
             .attr("font-size", '20px'); // set font size
 
-// Add y axis to svg6 
+// Add y axis to svg
 scatterSvg.append("g") // g is a "placeholder" svg
             .attr("transform", `translate(${margin.left}, 0)`) 
             // ^ move axis inside of left margin
             .call(d3.axisLeft(yScale).tickFormat(y => (y == 0 || y == 100) ? y : "")) // built in function for left
-                                        // axis given a scale function 
-            .attr("font-size", '20px'); // set font size
+             .attr("font-size", '20px'); // set font size
 
-scatterSvg.selectAll("myDots")
+scatterSvg.append("myDots").selectAll("myDots")
             .data(seriesData)
             .enter()
-            .append('g')
-            .attr("fill", (d) => { return myColor(d.name) })
-            .attr("d", (d) => { return myShape(d.name) })
-            .selectAll("myPoints")
+            .attr("fill", (d) => { return myColor(d.key) })
+            .append("myPoints").selectAll("myPoints")
             .data((d) => { return d.values() })
             .enter()
             .append("circle")
             .attr("cx", (d) => { return xScale(d.x) } )
             .attr("cy", (d) => { return yScale(d.y) } )
             .attr("r", 5)
+
+let defs = scatterSvg.append("defs");
+
+let linearGradient = defs.append("linearGradient")
+    .attr("id", "linear-gradient");
+    
+linearGradient.attr("x1", "0%")
+                .attr("y1", "0%")
+                .attr("x2", "100%")
+                .attr("y2", "0%");
+
+// scatterSvg.append("rect")
+//             .attr("width", width)
+//             .attr("height", 20)
+//             .style("fill", "url(#linear-gradient)");
