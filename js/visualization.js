@@ -77,7 +77,7 @@ function zoomed(event) {
 
 // Legend
 var legend = svg.selectAll("g.legend")
-                  .data(ext_color_domain)
+                  .data(ext_color_domain.reverse())
                   .enter().append("g")
                   .attr("class", "legend");
 
