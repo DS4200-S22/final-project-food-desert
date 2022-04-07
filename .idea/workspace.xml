@@ -20,7 +20,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="995a4821-ad4d-4755-96d1-e1e6f29f1ec3" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/js/barchart-vis.js" beforeDir="false" afterPath="$PROJECT_DIR$/js/barchart-vis.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/d3.v6.1.1/CHANGES.md" beforeDir="false" afterPath="$PROJECT_DIR$/lib/d3.v6.1.1/CHANGES.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -72,6 +75,7 @@
       <workItem from="1649180797831" duration="1471000" />
       <workItem from="1649182448364" duration="4404000" />
       <workItem from="1649280024659" duration="1307000" />
+      <workItem from="1649309195231" duration="663000" />
     </task>
     <servers />
   </component>
