@@ -132,9 +132,23 @@ function county_clicked(event, d) {
   let county = d3.select(this);
   if (county.classed("county-selected")) {
     county.classed("county-selected", false);
+
+    // remove the county id from the list of counties to be included in the bar chart
+    d3.select(this).transition().style("fill", null);
+    var index = counties.indexOf(d.id);
+    counties.splice(index, 1);
+
+    // update the bar chart
+    update_bar();
   }
   else {
     county.classed("county-selected", true);
+
+    // add the county id to the list of counties to be included in the bar chart
+    counties.push(d.id);
+
+    // update the bar chart
+    update_bar();
   }
 }
 
