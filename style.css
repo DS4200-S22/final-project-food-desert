@@ -59,6 +59,11 @@ h3 {
   pointer-events: none;
 }
 
+
+#states {
+  display: none;
+}
+
 .county-selected {
   stroke: red;
   stroke-width:2px;
