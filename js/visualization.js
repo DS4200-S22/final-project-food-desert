@@ -140,6 +140,8 @@ function county_clicked(event, d) {
 
     // update the bar chart
     update_bar();
+    // update the scatter plot
+    updateScatter();
   }
   else {
     county.classed("county-selected", true);
@@ -149,6 +151,8 @@ function county_clicked(event, d) {
 
     // update the bar chart
     update_bar();
+    // update the scatter plot
+    updateScatter();
   }
 }
 
