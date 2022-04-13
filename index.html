@@ -79,7 +79,8 @@
               id="searchbar1"
               class="searchbar"
               list="counties1"
-              oninput="onInput()"
+              onchange="onInput(this.value)"
+              onfocus="clearSelection(this)"
               placeholder="Search for a county"
             />
             <datalist id="counties1"> </datalist>
@@ -90,7 +91,8 @@
               id="searchbar2"
               class="searchbar"
               list="counties2"
-              oninput="onInput()"
+              onchange="onInput(this.value)"
+              onfocus="clearSelection(this)"
               placeholder="Search for a county"
             />
             <datalist id="counties2"> </datalist>
@@ -101,7 +103,8 @@
               id="searchbar3"
               list="counties3"
               class="searchbar"
-              oninput="onInput()"
+              onchange="onInput(this.value)"
+              onfocus="clearSelection(this)"
               placeholder="Search for a county"
             />
             <datalist id="counties3"> </datalist>
