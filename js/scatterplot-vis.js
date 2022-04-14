@@ -1,6 +1,6 @@
 // set the dimensions and margins of the graph
 const scatterMargin = {left:50, right:50, bottom:50, top:50}; 
-const scatterWidth = 600 - scatterMargin.left - scatterMargin.right; 
+const scatterWidth = 500 - scatterMargin.left - scatterMargin.right; 
 const scatterHeight = 400 - scatterMargin.top - scatterMargin.bottom; 
 
 // add an svg to build within using deminsions set above
@@ -17,10 +17,10 @@ function updateScatter() {
         /*
         Data
         */
-        const healthGroup = ["PCT_DIABETES_ADULTS13", "PCT_OBESE_ADULTS13"];
+        const healthGroup = ["diabetes", "obesity"];
 
         let filteredData = finalData.filter(function (row) {
-            return counties.includes(row['FIPS']);
+            return counties.includes(row["FIPS"]);
         });
 
         let allData = filteredData.map(function(d) {
@@ -43,147 +43,133 @@ function updateScatter() {
             }
         });
 
+        scatterSvg.selectAll("circle").remove();
+        scatterSvg.selectAll('g').remove();
+
         const dataReady = healthGroup.map(function(grpName) {
             return {
                 name: grpName,
                 values: allData.map(function(d) {
-                    return {lAccessPop: d.PCT_LACCESS_POP15, value: d[grpName]}
+                    return {lowAccess: d.lAccessPop, value: +d[grpName]}
                 })
             }
         });
 
-        // scatterSvg.selectAll("circle").remove();
-
-        /*
-        Scatterplot
-        */
-        const colorScale = d3.scaleLinear()
-	                                .domain([0, 100])
-	                                .range(["#ffa474", "#8b0000"]);
+        const myColor = d3.scaleOrdinal()
+                            .domain(healthGroup)
+                            .range(d3.schemeSet2);
 
         let xScale = d3.scaleLinear()
                         .domain([0, 100])
                         .range([scatterMargin.left, scatterWidth - scatterMargin.right]);
         
         // Add x axis to svg
-        scatterSvg.append("g") // g is a "placeholder" svg
+        scatterSvg.append("g")
                     .attr("transform", `translate(0,${scatterHeight - scatterMargin.bottom})`) 
-                    // ^ moves axis to bottom of svg 
-                    .call(d3.axisBottom(xScale).tickFormat(x => (x == 0 || x == 100) ? x : "")) // built in function for bottom
+                    .call(d3.axisBottom(xScale).tickFormat(x => (x == 0 || x == 100) ? x : ""))
         
         let yScale = d3.scaleLinear()
                         .domain([0, 100])
                         .range([scatterHeight - scatterMargin.bottom, scatterMargin.top]);
         
         // Add y axis to svg
-        scatterSvg.append("g") // g is a "placeholder" svg
+        scatterSvg.append("g")
                     .attr("transform", `translate(${scatterMargin.left}, 0)`) 
-                    // ^ move axis inside of left margin
-                    .call(d3.axisLeft(yScale).tickFormat(y => (y == 0 || y == 100) ? y : "")) // built in function for left
+                    .call(d3.axisLeft(yScale).tickFormat(y => (y == 0 || y == 100) ? y : ""))
         
-        let shape = d3.scaleOrdinal(healthGroup, d3.symbols.map(s => d3.symbol().type(s)()));        
-    
+        // Add x axis label
+        scatterSvg.append("text")
+                    .attr("text-anchor", "middle")
+                    .attr("x", scatterWidth / 2)
+                    .attr("y", scatterHeight + scatterMargin.top + 20)
+                    .text("% Population Low Access to Grocery Store");
+
+        // Add y axis label
+        scatterSvg.append("text")
+                    .attr("text-anchor", "middle")
+                    .attr("transform", "rotate(-90)")
+                    .attr("y", -scatterMargin.left + 20)
+                    .attr("x", -scatterMargin.top)
+                    .text("% Adult Population w/ Health Condition")
+                
+        scatterSvg.append("circle")
+                    .attr("cx", 250)
+                    .attr("cy", 650)
+                    .attr("r", 5)
+                    .style("fill", d3.schemeSet2[0])
+                    .attr("stroke", "white");
+        scatterSvg.append("circle")
+                    .attr("cx", 300)
+                    .attr("cy", 650)
+                    .attr("r", 5)
+                    .style("fill", d3.schemeSet2[1])
+                    .attr("stroke", "white");
+        scatterSvg.append("text")
+                    .attr("x", 210)
+                    .attr("y", 650)
+                    .text("Diabetes")
+                    .style("font-size", "15px")
+                    .attr("alignment-baseline", "middle");
+        scatterSvg.append("text")
+                    .attr("x", 310)
+                    .attr("y", 650)
+                    .text("Obesity")
+                    .style("font-size", "15px")
+                    .attr("alignment-baseline", "middle");
+
+        // Create a tooltip to display county and state of highlighted 
+        let scatterToolTip = d3.select("#scatterplot-vis")
+                                .append("div")
+                                .style("opacity", 0)
+                                .attr("class", "tooltip")
+                                .attr('id', "tooltip-map")
+                                .style("background-color", "white")
+                                .style("border", "solid")
+                                .style("border-width", "1px")
+                                .style("border-radius", "5px")
+                                .style("padding", "10px");
+            
+        // let mouseover = function(event, d) {
+        //     scatterToolTip.html(d.allData[county] + ", " + d.allData[state])
+        //                     .style("opacity", 1);
+        // }
+
+        // let mousemove = function(event, d) {
+        //     scatterToolTip.style("left", (event.pageX + 5)+"px")
+        //                     .style("top", (event.pageY - 25) +"px");
+        // }
+      
+        // let mouseleave = function(d) {
+        //     scatterToolTip.style("opacity", 0);
+        // }
+
         // Add the data points
         scatterSvg.selectAll("myDots")
                     .data(dataReady)
                     .enter()
                     .append("g")
-                        .attr("d", d => d3.symbol().type(function(d) 
-                                                            { if (d.name == "PCT_DIABETES_ADULTS13") { return d3.symbolCircle}
-                                                            else { return d3.symbolDiamond } }))
+                        .style("fill", function(d){ return myColor(d.name) })
                     .selectAll("myPoints")
                     .data(function(d) { return d.values })
                     .enter()
-                    .append("g")
-                        .attr("transform", function(d){ return "translate(" + xScale(d.lAccessPop) + "," + yScale(d.value) + ")" });
-        
-        /* 
-        Legend 
-        */
-       
-        let defs = scatterSvg.append("defs");
-
-        let linearGradient = defs.append("linearGradient")
-                                    .attr("id", "linear-gradient");
-            
-        linearGradient.attr("x1", "0%")
-                        .attr("y1", "0%")
-                        .attr("x2", "100%")
-                        .attr("y2", "0%");
-        
-        // Set the color for the start (0%)
-        linearGradient.append("stop")
-                        .attr("offset", "0%")
-                        .attr("stop-color", "#73c5b7"); // light blue
-
-        // Set the color for the end (100%)
-        linearGradient.append("stop")
-                        .attr("offset", "100%")
-                        .attr("stop-color", "#3086ac"); // dark blue
-        
-        // Draw the rectangle and fill with gradient
-        scatterSvg.append("rect")
-                    .attr("width", scatterWidth)
-                    .attr("height", 20)
-                    .style("fill", "url(#linear-gradient)");
+                    .append("circle")
+                        .attr("cx", function(d) { return xScale(d.lowAccess) } )
+                        .attr("cy", function(d) { return yScale(d.value) } )
+                        .attr("r", 5)
+                        .attr("stroke", "white")
+                    .on("mouseover", function(event, d) { 
+                                        scatterToolTip.html(d.allData[county] + ", " + d.allData[state])
+                                                        .style("opacity", 1);
+                                        d3.select(this).transition()
+                                            .duration("50")
+                                            .attr("opacity", ".80"); })
+                    .on("mousemove", function(event, d) {
+                                        scatterToolTip.style("left", (event.pageX + 5)+"px")
+                                                        .style("top", (event.pageY - 25) +"px"); })
+                    .on("mouseleave", function(d) { 
+                                        scatterToolTip.style("opacity", 0); 
+                                        d3.select(this).transition()
+                                            .duration("50")
+                                            .attr("opacity", "1"); });
     });
 }
-
-
-// // find max X
-// let maxX = 100;
-
-// // find max Y 
-// let maxY = 100;
-
-// let xScale = d3.scaleLinear() // linear scale because we have 
-//                               // linear data 
-//                 .domain([0, maxX])  // inputs for the function
-//                 .range([margin.left, width - margin.right]); 
-//                 // ^ outputs for the function 
-
-// let yScale = d3.scaleLinear()
-//                 .domain([0, maxY])
-//                 .range([height - margin.bottom, margin.top]);
-
-// // Add x axis to svg
-// scatterSvg.append("g") // g is a "placeholder" svg
-//             .attr("transform", `translate(0,${height - margin.bottom})`) 
-//             // ^ moves axis to bottom of svg 
-//             .call(d3.axisBottom(xScale).tickFormat(x => (x == 0 || x == 100) ? x : "")) // built in function for bottom
-//             .attr("font-size", '20px'); // set font size
-
-// // Add y axis to svg
-// scatterSvg.append("g") // g is a "placeholder" svg
-//             .attr("transform", `translate(${margin.left}, 0)`) 
-//             // ^ move axis inside of left margin
-//             .call(d3.axisLeft(yScale).tickFormat(y => (y == 0 || y == 100) ? y : "")) // built in function for left
-//              .attr("font-size", '20px'); // set font size
-
-// scatterSvg.selectAll("myDots")
-//             .data(seriesData)
-//             .enter()
-//             .append('g')
-//             .attr("fill", (d) => { return myColor(d.keys) })
-//             .selectAll("myPoints")
-//             .data( (d) => { return d.values() })
-//             .enter()
-//             .append("circle")
-//             .attr("cx", (d) => { return xScale(d.x) } )
-//             .attr("cy", (d) => { return yScale(d.y) } )
-//             .attr("r", 5)
-
-// let defs = scatterSvg.append("defs");
-
-// let linearGradient = defs.append("linearGradient")
-//     .attr("id", "linear-gradient");
-    
-// linearGradient.attr("x1", "0%")
-//                 .attr("y1", "0%")
-//                 .attr("x2", "100%")
-//                 .attr("y2", "0%");
-
-// scatterSvg.append("rect")
-//             .attr("width", width)
-//             .attr("height", 20)
-//             .style("fill", "url(#linear-gradient)");
