@@ -1,9 +1,9 @@
-// set the dimensions and margins of the graph
+// Set the dimensions and margins of the graph
 const scatterMargin = {left:50, right:50, bottom:50, top:50}; 
 const scatterWidth = 500 - scatterMargin.left - scatterMargin.right; 
 const scatterHeight = 400 - scatterMargin.top - scatterMargin.bottom; 
 
-// add an svg to build within using deminsions set above
+// Add an svg to build within using deminsions set above
 let scatterSvg = d3.select("#scatterplot-vis")
                     .append("svg")
                     .attr("width", scatterWidth + scatterMargin.left + scatterMargin.right)
@@ -13,16 +13,17 @@ let scatterSvg = d3.select("#scatterplot-vis")
 updateScatter();
 
 function updateScatter() {
+    // Create scatter plot given a dataset
     d3.csv("data/finaldata.csv").then((finalData) => {
-        /*
-        Data
-        */
+        // Set the label groups for the multiple series scatter plot
         const healthGroup = ["diabetes", "obesity"];
 
+        // Filter data to return only from the global counties list
         let filteredData = finalData.filter(function (row) {
             return counties.includes(row["FIPS"]);
         });
 
+        // Return a dictionary format of all data
         let allData = filteredData.map(function(d) {
             return {
                 lat: d.Latitude,
@@ -43,22 +44,34 @@ function updateScatter() {
             }
         });
 
+        // clear all points and axes
         scatterSvg.selectAll("circle").remove();
-        scatterSvg.selectAll('g').remove();
+        scatterSvg.selectAll("g").remove();
 
+        // Format data for svg
         const dataReady = healthGroup.map(function(grpName) {
             return {
                 name: grpName,
                 values: allData.map(function(d) {
-                    return {lowAccess: d.lAccessPop, value: +d[grpName]}
+                    return {lowAccess: d.lAccessPop, value: +d[grpName], countyName: d.county, stateName: d.state}
                 })
             }
         });
 
+        // Return color key based on health rate group
         const myColor = d3.scaleOrdinal()
                             .domain(healthGroup)
-                            .range(d3.schemeSet2);
+                            .range([d3.schemeSet3[0], d3.schemeSet3[2]]);
 
+        // Add title to top of scatter plot
+        scatterSvg.append("text")
+                    .attr("x", scatterWidth / 2)
+                    .attr("y", scatterMargin.top - 20)
+                    .attr("text-anchor", "middle")
+                    .style("font-size", "12px")
+                    .text("Health Rates vs. Low Access to Grocery Stores");
+
+        // Return the linear x scale from 0 to 100
         let xScale = d3.scaleLinear()
                         .domain([0, 100])
                         .range([scatterMargin.left, scatterWidth - scatterMargin.right]);
@@ -66,8 +79,16 @@ function updateScatter() {
         // Add x axis to svg
         scatterSvg.append("g")
                     .attr("transform", `translate(0,${scatterHeight - scatterMargin.bottom})`) 
-                    .call(d3.axisBottom(xScale).tickFormat(x => (x == 0 || x == 100) ? x : ""))
-        
+                    .call(d3.axisBottom(xScale).tickFormat(x => (x == 0 || x == 100) ? x : ""));
+        // Add x axis label to svg
+        scatterSvg.append("text")
+                    .attr("x", scatterWidth / 2)
+                    .attr("y", scatterHeight - 20)
+                    .attr("text-anchor", "middle")
+                    .style("font-size", "10px")
+                    .text("% Population Low Access to Grocery Store");
+
+        // Return the linear y scale from 0 to 100
         let yScale = d3.scaleLinear()
                         .domain([0, 100])
                         .range([scatterHeight - scatterMargin.bottom, scatterMargin.top]);
@@ -75,46 +96,40 @@ function updateScatter() {
         // Add y axis to svg
         scatterSvg.append("g")
                     .attr("transform", `translate(${scatterMargin.left}, 0)`) 
-                    .call(d3.axisLeft(yScale).tickFormat(y => (y == 0 || y == 100) ? y : ""))
-        
-        // Add x axis label
-        scatterSvg.append("text")
-                    .attr("text-anchor", "middle")
-                    .attr("x", scatterWidth / 2)
-                    .attr("y", scatterHeight + scatterMargin.top + 20)
-                    .text("% Population Low Access to Grocery Store");
-
-        // Add y axis label
+                    .call(d3.axisLeft(yScale).tickFormat(y => (y == 0 || y == 100) ? y : ""));
+        // Add y axis label to svg
         scatterSvg.append("text")
                     .attr("text-anchor", "middle")
                     .attr("transform", "rotate(-90)")
-                    .attr("y", -scatterMargin.left + 20)
-                    .attr("x", -scatterMargin.top)
-                    .text("% Adult Population w/ Health Condition")
-                
+                    .attr("y", scatterHeight - 280)
+                    .attr("x", -scatterWidth / 2 + 40)
+                    .style("font-size", "10px")
+                    .text("% Adult Population w/ Health Condition");
+        
+        // Create a handmade legend of health rates
         scatterSvg.append("circle")
-                    .attr("cx", 250)
-                    .attr("cy", 650)
+                    .attr("cx", scatterWidth / 2 - 60)
+                    .attr("cy", scatterHeight)
                     .attr("r", 5)
-                    .style("fill", d3.schemeSet2[0])
+                    .style("fill", d3.schemeSet3[0])
                     .attr("stroke", "white");
         scatterSvg.append("circle")
-                    .attr("cx", 300)
-                    .attr("cy", 650)
+                    .attr("cx", scatterWidth / 2 + 50)
+                    .attr("cy", scatterHeight)
                     .attr("r", 5)
-                    .style("fill", d3.schemeSet2[1])
+                    .style("fill", d3.schemeSet3[2])
                     .attr("stroke", "white");
         scatterSvg.append("text")
-                    .attr("x", 210)
-                    .attr("y", 650)
+                    .attr("x", scatterWidth / 2 - 50)
+                    .attr("y", scatterHeight)
                     .text("Diabetes")
-                    .style("font-size", "15px")
+                    .style("font-size", "10px")
                     .attr("alignment-baseline", "middle");
         scatterSvg.append("text")
-                    .attr("x", 310)
-                    .attr("y", 650)
+                    .attr("x", scatterWidth / 2 + 60)
+                    .attr("y", scatterHeight)
                     .text("Obesity")
-                    .style("font-size", "15px")
+                    .style("font-size", "10px")
                     .attr("alignment-baseline", "middle");
 
         // Create a tooltip to display county and state of highlighted 
@@ -129,21 +144,7 @@ function updateScatter() {
                                 .style("border-radius", "5px")
                                 .style("padding", "10px");
             
-        // let mouseover = function(event, d) {
-        //     scatterToolTip.html(d.allData[county] + ", " + d.allData[state])
-        //                     .style("opacity", 1);
-        // }
-
-        // let mousemove = function(event, d) {
-        //     scatterToolTip.style("left", (event.pageX + 5)+"px")
-        //                     .style("top", (event.pageY - 25) +"px");
-        // }
-      
-        // let mouseleave = function(d) {
-        //     scatterToolTip.style("opacity", 0);
-        // }
-
-        // Add the data points
+        // Add data points and tooltip to scatter plot
         scatterSvg.selectAll("myDots")
                     .data(dataReady)
                     .enter()
@@ -158,11 +159,11 @@ function updateScatter() {
                         .attr("r", 5)
                         .attr("stroke", "white")
                     .on("mouseover", function(event, d) { 
-                                        scatterToolTip.html(d.allData[county] + ", " + d.allData[state])
+                                        scatterToolTip.html(d.countyName + ", " + d.stateName)
                                                         .style("opacity", 1);
                                         d3.select(this).transition()
                                             .duration("50")
-                                            .attr("opacity", ".80"); })
+                                            .attr("opacity", ".75"); })
                     .on("mousemove", function(event, d) {
                                         scatterToolTip.style("left", (event.pageX + 5)+"px")
                                                         .style("top", (event.pageY - 25) +"px"); })
