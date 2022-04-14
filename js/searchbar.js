@@ -60,6 +60,7 @@ function onInput(selectedLocation) {
     showHideOutline(selectedLocation);
 
     update_bar();
+    updateScatter();
   }
 }
 
