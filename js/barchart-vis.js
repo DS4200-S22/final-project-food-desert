@@ -12,14 +12,19 @@ const svgBar = d3
   .append("g")
   .attr("transform", "translate(" + marginBar.left + "," + marginBar.top + ")");
 
-// starting list of counties to be in the bar chart (global variable)
+// list of counties to be in the bar chart (global variable)
 var counties = [];
 
+// call update_bar to display graph when html first loaded
 update_bar();
 
+// clear the current bars/axes and add new bars/axes for the counties in the above list
 function update_bar() {
+
   // Parse the Data
   d3.csv("data/finaldata.csv").then((finalData) => {
+
+    // Filter data for only the counties in the list to be bars in the graph
     var data;
     filteredData = finalData.filter(function (row) {
       return counties.includes(row["FIPS"]);
@@ -45,20 +50,19 @@ function update_bar() {
       };
     });
 
-    // CLEAR all the bars and axes
+    // Clear all the bars and axes
     svgBar.selectAll("rect").remove();
     svgBar.selectAll('g').remove();
 
-    // List of subgroups = header of the csv files = soil condition here
+    // Get list of subgroups (demographics)
     const access = finalData.columns.slice(8);
 
-    //stack the data? --> stack per subgroup
+    // Stack the data by subgroup
     const stackedData = d3.stack().keys(access)(data);
 
-    // get x domain
+    // get the X domain, the County name + State Abbrev
     let domainX = data.map(function(d) {
       if (counties.includes(d['FIPS'])) {
-        // return d.County;
         return d.County + ', ' + d.State;
       }
     });
@@ -79,17 +83,18 @@ function update_bar() {
           .text("County")
       );
 
-    // Find max y
+    // Find max Y, add 5 for additional space
     let maxY = d3.max(data, (d) => {
       return Number(d.PCT_LACCESS_POP15) + 5;
     });
 
+    // let the max Y be 100
     let domainY = Math.min(maxY, 100);
 
     // Add Y axis
     const y = d3.scaleLinear().domain([0, domainY]).range([heightBar, 0]);
-    // .padding(0.2);
 
+    // add label to y axis
     svgBar
       .append("g")
       .call(d3.axisLeft(y))
@@ -104,6 +109,7 @@ function update_bar() {
           .text("% Population Low Access to Grocery Store")
       );
 
+    // add label to x axis
     svgBar
       .append("text")
       .attr("x", widthBar / 2)
@@ -112,7 +118,7 @@ function update_bar() {
       .style("font-size", "16px")
       .text("County Low Access to Grocery Stores");
 
-    // Handmade legend
+    // Handmade legend for subgroups (demographics)
     svgBar
       .append("rect")
       .attr("x", 315)
@@ -227,10 +233,7 @@ function update_bar() {
       ]);
 
 
-    // ----------------
-    // Create a tooltip
-    // ----------------
-
+    // Create a tooltip to display "Demographic: % low access"
     var bar_tooltip = d3.select("#barchart-vis")
         .append("div")
         .style("opacity", 0)
@@ -242,12 +245,12 @@ function update_bar() {
         .style("border-radius", "5px")
         .style("padding", "10px")
 
-
     // Three function that change the tooltip when user hover / move / leave a cell
     var mouseover = function(event, d) {
       const subgroupName = d3.select(this.parentNode).datum().key;
       var subgroupValue = Number(d.data[subgroupName]).toFixed(2);
 
+      // get the abbreviation for each subgroup
       var MutableString = function(value) {
         switch (value) {
           case 'PCT_LACCESS_WHITE15':
@@ -285,8 +288,8 @@ function update_bar() {
 
       var demo_abbrev = new MutableString(subgroupName);
 
+      // set tooltip to display "Demographic: % low access"
       bar_tooltip
-          // .html("Demographic: " + demo_abbrev + "<br>" + "% Low Access: " + subgroupValue + "%")
           .html(demo_abbrev + ": " + subgroupValue + "%")
           .style("opacity", 1)
     }
@@ -303,7 +306,7 @@ function update_bar() {
     }
 
 
-    // Show the bars
+    // Show the bars on the chart
     svgBar
       .append("g")
       .selectAll("g")
