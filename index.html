@@ -72,6 +72,7 @@
       </div>
       <div class="right-container">
         <h2>Compare by County</h2>
+        <p>Select up to 3 counties by searching or clicking on the map</p>
         <div class="search-container">
           <div class="searchbar">
             <input
@@ -79,8 +80,9 @@
               id="searchbar1"
               class="searchbar"
               list="counties1"
-              oninput="onInput()"
-              placeholder="Search for a county"
+              onchange="onInput(this.value)"
+              onfocus="clearSelection(this)"
+              placeholder="County 1"
             />
             <datalist id="counties1"> </datalist>
           </div>
@@ -90,8 +92,9 @@
               id="searchbar2"
               class="searchbar"
               list="counties2"
-              oninput="onInput()"
-              placeholder="Search for a county"
+              onchange="onInput(this.value)"
+              onfocus="clearSelection(this)"
+              placeholder="County 2"
             />
             <datalist id="counties2"> </datalist>
           </div>
@@ -101,8 +104,9 @@
               id="searchbar3"
               list="counties3"
               class="searchbar"
-              oninput="onInput()"
-              placeholder="Search for a county"
+              onchange="onInput(this.value)"
+              onfocus="clearSelection(this)"
+              placeholder="County 3"
             />
             <datalist id="counties3"> </datalist>
           </div>
