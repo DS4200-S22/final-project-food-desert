@@ -168,7 +168,7 @@ function county_clicked(event, d) {
 
     // remove the county id from the list of counties to be included in the bar chart
     d3.select(this).transition().style("fill", null);
-    var index = counties.indexOf(d.id);
+    let index = counties.indexOf(d.id);
     counties.splice(index, 1);
 
     // update search bar selections
