@@ -20,10 +20,8 @@ update_bar();
 
 // clear the current bars/axes and add new bars/axes for the counties in the above list
 function update_bar() {
-
   // Parse the Data
   d3.csv("data/finaldata.csv").then((finalData) => {
-
     // Filter data for only the counties in the list to be bars in the graph
     var data;
     filteredData = finalData.filter(function (row) {
@@ -52,7 +50,7 @@ function update_bar() {
 
     // Clear all the bars and axes
     svgBar.selectAll("rect").remove();
-    svgBar.selectAll('g').remove();
+    svgBar.selectAll("g").remove();
 
     // Get list of subgroups (demographics)
     const access = finalData.columns.slice(8);
@@ -61,9 +59,9 @@ function update_bar() {
     const stackedData = d3.stack().keys(access)(data);
 
     // get the X domain, the County name + State Abbrev
-    let domainX = data.map(function(d) {
-      if (counties.includes(d['FIPS'])) {
-        return d.County + ', ' + d.State;
+    let domainX = data.map(function (d) {
+      if (counties.includes(d["FIPS"])) {
+        return d.County + ", " + d.State;
       }
     });
 
@@ -125,49 +123,49 @@ function update_bar() {
       .attr("y", -5)
       .attr("width", 10)
       .attr("height", 10)
-      .style("fill", "#003f5c");
+      .style("fill", "#E67E22");
     svgBar
       .append("rect")
       .attr("x", 315)
       .attr("y", 15)
       .attr("width", 10)
       .attr("height", 10)
-      .style("fill", "#374c80");
+      .style("fill", "#F4D03F");
     svgBar
       .append("rect")
       .attr("x", 315)
       .attr("y", 35)
       .attr("width", 10)
       .attr("height", 10)
-      .style("fill", "#7a5195");
+      .style("fill", "#7D3C98");
     svgBar
       .append("rect")
       .attr("x", 315)
       .attr("y", 55)
       .attr("width", 10)
       .attr("height", 10)
-      .style("fill", "#bc5090");
+      .style("fill", "#48C9B0");
     svgBar
       .append("rect")
       .attr("x", 315)
       .attr("y", 75)
       .attr("width", 10)
       .attr("height", 10)
-      .style("fill", "#ef5675");
+      .style("fill", "#3498DB");
     svgBar
       .append("rect")
       .attr("x", 315)
       .attr("y", 95)
       .attr("width", 10)
       .attr("height", 10)
-      .style("fill", "#ff764a");
+      .style("fill", "#34495E");
     svgBar
       .append("rect")
       .attr("x", 315)
       .attr("y", 115)
       .attr("width", 10)
       .attr("height", 10)
-      .style("fill", "#ffa600");
+      .style("fill", "#E74C3C");
     svgBar
       .append("text")
       .attr("x", 330)
@@ -223,88 +221,86 @@ function update_bar() {
       .scaleOrdinal()
       .domain(access)
       .range([
-        "#ffa600",
-        "#ff764a",
-        "#ef5675",
-        "#bc5090",
-        "#7a5195",
-        "#374c80",
-        "#003f5c",
+        "#E74C3C",
+        "#34495E",
+        "#3498DB",
+        "#48C9B0",
+        "#7D3C98",
+        "#F4D03F",
+        "#E67E22",
       ]);
 
-
     // Create a tooltip to display "Demographic: % low access"
-    var bar_tooltip = d3.select("#barchart-vis")
-        .append("div")
-        .style("opacity", 0)
-        .attr("class", "tooltip")
-        .attr('id', "tooltip-map")
-        .style("background-color", "white")
-        .style("border", "solid")
-        .style("border-width", "1px")
-        .style("border-radius", "5px")
-        .style("padding", "10px")
+    var bar_tooltip = d3
+      .select("#barchart-vis")
+      .append("div")
+      .style("opacity", 0)
+      .attr("class", "tooltip")
+      .attr("id", "tooltip-map")
+      .style("background-color", "white")
+      .style("border", "solid")
+      .style("border-width", "1px")
+      .style("border-radius", "5px")
+      .style("padding", "10px");
 
     // Three function that change the tooltip when user hover / move / leave a cell
-    var mouseover = function(event, d) {
+    var mouseover = function (event, d) {
       const subgroupName = d3.select(this.parentNode).datum().key;
       var subgroupValue = Number(d.data[subgroupName]).toFixed(2);
 
       // get the abbreviation for each subgroup
-      var MutableString = function(value) {
+      var MutableString = function (value) {
         switch (value) {
-          case 'PCT_LACCESS_WHITE15':
-            this.text = 'White';
+          case "PCT_LACCESS_WHITE15":
+            this.text = "White";
             break;
-          case 'PCT_LACCESS_BLACK15':
-            this.text = 'Black';
+          case "PCT_LACCESS_BLACK15":
+            this.text = "Black";
             break;
-          case 'PCT_LACCESS_HISP15':
-            this.text = 'Hispanic';
+          case "PCT_LACCESS_HISP15":
+            this.text = "Hispanic";
             break;
-          case 'PCT_LACCESS_NHASIAN15':
-            this.text = 'Asian';
+          case "PCT_LACCESS_NHASIAN15":
+            this.text = "Asian";
             break;
-          case 'PCT_LACCESS_NHNA15':
-            this.text = 'American Indian';
+          case "PCT_LACCESS_NHNA15":
+            this.text = "American Indian";
             break;
-          case 'PCT_LACCESS_NHPI15':
-            this.text = 'Hawaiian/Pacific';
+          case "PCT_LACCESS_NHPI15":
+            this.text = "Hawaiian/Pacific";
             break;
-          case 'PCT_LACCESS_MULTIR15':
-            this.text = 'Multiracial';
+          case "PCT_LACCESS_MULTIR15":
+            this.text = "Multiracial";
             break;
           default:
-            this.text = ''
-            console.log('default');
+            this.text = "";
+            console.log("default");
         }
       };
 
       MutableString.prototype = {
-        toString: function() {
+        toString: function () {
           return this.text;
-        }
+        },
       };
 
       var demo_abbrev = new MutableString(subgroupName);
 
       // set tooltip to display "Demographic: % low access"
       bar_tooltip
-          .html(demo_abbrev + ": " + subgroupValue + "%")
-          .style("opacity", 1)
-    }
+        .html(demo_abbrev + ": " + subgroupValue + "%")
+        .style("opacity", 1);
+    };
 
-    mousemove = function(event, d) {
+    mousemove = function (event, d) {
       bar_tooltip
-          .style("left", (event.pageX + 5)+"px")
-          .style("top", (event.pageY - 25) +"px");
-    }
+        .style("left", event.pageX + 5 + "px")
+        .style("top", event.pageY - 25 + "px");
+    };
 
-    var mouseleave = function(d) {
-      bar_tooltip
-          .style("opacity", 0)
-    }
-
+    var mouseleave = function (d) {
+      bar_tooltip.style("opacity", 0);
+    };
 
     // Show the bars on the chart
     svgBar
@@ -324,7 +320,7 @@ function update_bar() {
       })
       .enter()
       .append("rect")
-      .attr("x", d => x(d.data["County"] + ", " + d.data["State"]))
+      .attr("x", (d) => x(d.data["County"] + ", " + d.data["State"]))
       .attr("y", function (d) {
         return y(d[1]);
       })
@@ -332,9 +328,8 @@ function update_bar() {
         return y(d[0]) - y(d[1]);
       })
       .attr("width", x.bandwidth())
-        .on("mouseover", mouseover)
-        .on("mousemove", mousemove)
-        .on("mouseleave", mouseleave);
-
+      .on("mouseover", mouseover)
+      .on("mousemove", mousemove)
+      .on("mouseleave", mouseleave);
   });
 }
