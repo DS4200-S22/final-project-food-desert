@@ -13,7 +13,7 @@ const svgBar = d3
   .attr("transform", "translate(" + marginBar.left + "," + marginBar.top + ")");
 
 // list of counties to be in the bar chart (global variable)
-var counties = [];
+let counties = [];
 
 // call update_bar to display graph when html first loaded
 update_bar();
@@ -23,7 +23,7 @@ function update_bar() {
   // Parse the Data
   d3.csv("data/finaldata.csv").then((finalData) => {
     // Filter data for only the counties in the list to be bars in the graph
-    var data;
+    let data;
     filteredData = finalData.filter(function (row) {
       return counties.includes(row["FIPS"]);
     });
@@ -66,7 +66,7 @@ function update_bar() {
     });
 
     // Add X axis
-    var x = d3.scaleBand().domain(domainX).range([0, widthBar]).padding([0.2]);
+    let x = d3.scaleBand().domain(domainX).range([0, widthBar]).padding([0.2]);
     svgBar
       .append("g")
       .attr("transform", "translate(0," + heightBar + ")")
@@ -231,7 +231,7 @@ function update_bar() {
       ]);
 
     // Create a tooltip to display "Demographic: % low access"
-    var bar_tooltip = d3
+    let bar_tooltip = d3
       .select("#barchart-vis")
       .append("div")
       .style("opacity", 0)
@@ -244,12 +244,12 @@ function update_bar() {
       .style("padding", "10px");
 
     // Three function that change the tooltip when user hover / move / leave a cell
-    var mouseover = function (event, d) {
+    let mouseover = function (event, d) {
       const subgroupName = d3.select(this.parentNode).datum().key;
-      var subgroupValue = Number(d.data[subgroupName]).toFixed(2);
+      let subgroupValue = Number(d.data[subgroupName]).toFixed(2);
 
       // get the abbreviation for each subgroup
-      var MutableString = function (value) {
+      let MutableString = function (value) {
         switch (value) {
           case "PCT_LACCESS_WHITE15":
             this.text = "White";
@@ -284,7 +284,7 @@ function update_bar() {
         },
       };
 
-      var demo_abbrev = new MutableString(subgroupName);
+      let demo_abbrev = new MutableString(subgroupName);
 
       // set tooltip to display "Demographic: % low access"
       bar_tooltip
@@ -298,7 +298,7 @@ function update_bar() {
         .style("top", event.pageY - 25 + "px");
     };
 
-    var mouseleave = function (d) {
+    let mouseleave = function (d) {
       bar_tooltip.style("opacity", 0);
     };
 
