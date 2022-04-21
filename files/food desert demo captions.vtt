@@ -1,0 +1,50 @@
+WEBVTT
+
+1
+00:00:04.669 --> 00:00:15.630
+In this DEMO we want to show how our food desert visualization works. So, we wanted to visualize potential food deserts in the US, which can help people studying food deserts.
+
+2
+00:00:16.080 --> 00:00:25.920
+and help them know like where to allocate resources and also you can look at the health data related to those specific areas which is really helpful.
+
+3
+00:00:26.490 --> 00:00:38.790
+So, to the left, we have a map of all of the counties in the US, if you hover over certain counties, you could see the name of them. You can also zoom in and also drag to move around.
+
+4
+00:00:39.810 --> 00:00:54.240
+and basically we use color as the channel to represent the percentage of the population with lack of access to grocery stores and you could select up to three counties to compare.
+
+5
+00:00:55.440 --> 00:01:01.800
+And they'll show up in the right, you can also choose the counties using these search bars.
+
+6
+00:01:02.820 --> 00:01:08.670
+either by searching to search like Suffolk and then select that.
+
+7
+00:01:10.770 --> 00:01:22.290
+You can do that, so now, as you can see, we have two graphs on the right hand side and the first one is a bar graph and this bar graph shows.
+
+8
+00:01:22.620 --> 00:01:31.170
+The racial makeup of each county, and this is showing the low access to grocery stores.
+
+9
+00:01:31.770 --> 00:01:39.990
+rate so as you can see, we have the three counties that we added and they were selected, either through the search bar or clicking on the map.
+
+10
+00:01:40.470 --> 00:01:50.460
+If we did deselect them so i'll deselect this one, you can see it disappeared from the bar graph, and this also goes for the scatter plot below it.
+
+11
+00:01:50.730 --> 00:02:01.020
+If you hover over the points it shows a tool tip that has the name of the county and then you can see what point is correlating to what county.
+
+12
+00:02:01.380 --> 00:02:20.970
+And it is supposed to represent either the diabetes rate or the obesity rate and the types of marks I use are points and area and we used color to kind of show the different races and the different groups within the health rates.
+
